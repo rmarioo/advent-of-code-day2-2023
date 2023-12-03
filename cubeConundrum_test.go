@@ -1,10 +1,7 @@
 package main
 
 import (
-	"github.com/samber/lo"
 	"reflect"
-	. "strconv"
-	"strings"
 	"testing"
 )
 
@@ -59,47 +56,6 @@ func TestParseGameString(t *testing.T) {
 		t.Errorf("expected %q got %q", gameExpected, gameParsed)
 	}
 
-}
-
-func ParseGameString(s string) Game {
-	var fragments = strings.Split(s, ":")
-	gameId := parseGameId(fragments[0])
-	cubeSets := parseCubeSets(fragments[1])
-	return Game{id: gameId, cubeSet: cubeSets}
-}
-
-func parseCubeSets(s string) []CubeSet {
-	cubesetsFragments := strings.Split(s, ";")
-
-	var cubeSets []CubeSet
-
-	for _, fragment := range cubesetsFragments {
-		cubes := parseCubes(strings.Split(fragment, ","))
-		cubeSets = append(cubeSets, CubeSet{cubes: cubes})
-	}
-
-	return cubeSets
-}
-
-func parseCubes(cubeFragments []string) []Cube {
-	var cubes = []Cube{}
-	for _, cubeFragment := range cubeFragments {
-		cube := parseCube(cubeFragment)
-		cubes = append(cubes, cube)
-	}
-	return cubes
-}
-
-func parseCube(s string) Cube {
-	numAndColor := strings.Split(s, " ")
-	return Cube{lo.Must(Atoi(numAndColor[1])), numAndColor[2]}
-}
-
-func parseGameId(s string) int {
-	i := strings.Split(s, " ")
-
-	gameId, _ := Atoi(i[1])
-	return gameId
 }
 
 func assertEquals(res bool, expected bool, t *testing.T) {

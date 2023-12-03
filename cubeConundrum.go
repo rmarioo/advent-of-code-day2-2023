@@ -9,7 +9,31 @@ import (
 	"strings"
 )
 
-func Conundrum(supplier LinesSupplier, bag Bag) int {
+func ConundrumPartTwo(supplier LinesSupplier, bag Bag) int {
+
+	lines := supplier.Lines()
+	sum := 0
+	for _, line := range lines {
+		game := ParseGameString(line)
+
+		var bag Bag = game.CalculateMinBag()
+		var power int = bag.CalculatePower()
+
+		sum += power
+
+	}
+
+	return sum
+}
+
+func (game Game) CalculateMinBag() Bag {
+
+	greenNum, blueNum, redNum := game.calculateMinColors()
+	return game.bagFromColors(greenNum, blueNum, redNum)
+
+}
+
+func ConundrumPartOne(supplier LinesSupplier, bag Bag) int {
 
 	lines := supplier.Lines()
 	sum := 0
@@ -40,8 +64,55 @@ func (game Game) isPossibleFor(bag Bag) bool {
 	return same
 }
 
+func (game Game) bagFromColors(greenNum int, blueNum int, redNum int) Bag {
+	var cubes = []Cube{}
+	if greenNum > 0 {
+		cubes = append(cubes, Cube{num: greenNum, color: "green"})
+	}
+	if blueNum > 0 {
+		cubes = append(cubes, Cube{num: blueNum, color: "blue"})
+	}
+	if redNum > 0 {
+		cubes = append(cubes, Cube{num: redNum, color: "red"})
+	}
+
+	bag := Bag{cubes: cubes}
+	return bag
+}
+
+func (game Game) calculateMinColors() (int, int, int) {
+	var greenNum = 0
+	var blueNum = 0
+	var redNum = 0
+
+	for _, cubeset := range game.cubeSet {
+
+		for _, cube := range cubeset.cubes {
+			if cube.color == "red" && redNum < cube.num {
+				redNum = cube.num
+			}
+			if cube.color == "green" && greenNum < cube.num {
+				greenNum = cube.num
+			}
+			if cube.color == "blue" && blueNum < cube.num {
+				blueNum = cube.num
+			}
+		}
+	}
+	return greenNum, blueNum, redNum
+}
+
 type Bag struct {
 	cubes []Cube
+}
+
+func (b Bag) CalculatePower() int {
+
+	var power = 1
+	for _, cube := range b.cubes {
+		power = power * cube.num
+	}
+	return power
 }
 
 func canFit(bag Bag, cube Cube) bool {

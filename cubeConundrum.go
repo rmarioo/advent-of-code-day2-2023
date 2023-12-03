@@ -27,22 +27,20 @@ func (game Game) isPossibleFor(bag Bag) bool {
 }
 
 type Bag struct {
-	cubeSet []CubeSet
+	cubes []Cube
 }
 
 func canFit(bag Bag, cube Cube) bool {
 	bagCanFit := false
-	for _, cubeset := range bag.cubeSet {
 
-		for _, bagCube := range cubeset.cubes {
+	for _, bagCube := range bag.cubes {
 
-			if bagCube.color == cube.color && bagCube.num >= cube.num {
-				bagCanFit = true
-				break
-			}
+		if bagCube.color == cube.color && bagCube.num >= cube.num {
+			bagCanFit = true
+			break
 		}
-
 	}
+
 	return bagCanFit
 }
 
@@ -58,10 +56,6 @@ type CubeSet struct {
 type Game struct {
 	id      int
 	cubeSet []CubeSet
-}
-
-type LinesSupplier interface {
-	Lines() []string
 }
 
 func ParseGameString(s string) Game {
@@ -105,6 +99,9 @@ func parseGameId(s string) int {
 	return gameId
 }
 
+type LinesSupplier interface {
+	Lines() []string
+}
 type FromFileLinesSupplier struct {
 	fileName string
 }

@@ -48,11 +48,11 @@ func TestMultiCubesSameColorGame(t *testing.T) {
 
 func TestParseGameString(t *testing.T) {
 
-	var gameParsed Game = ParseGameString("Game 95: 6 blue; 3 red; 4 blue")
+	var gameParsed Game = ParseGameString("Game 95: 6 blue, 1 green; 3 red, 11 green; 4 blue")
 
 	gameExpected := Game{id: 95, cubeSet: []CubeSet{
-		{cubes: []Cube{{num: 6, color: "blue"}}},
-		{cubes: []Cube{{num: 3, color: "red"}}},
+		{cubes: []Cube{{num: 6, color: "blue"}, {num: 1, color: "green"}}},
+		{cubes: []Cube{{num: 3, color: "red"}, {num: 11, color: "green"}}},
 		{cubes: []Cube{{num: 4, color: "blue"}}}}}
 
 	if reflect.DeepEqual(gameParsed, gameExpected) == false {
@@ -71,20 +71,22 @@ func ParseGameString(s string) Game {
 func parseCubeSets(s string) []CubeSet {
 	cubesetsFragments := strings.Split(s, ";")
 
-	var cubeSets = []CubeSet{}
+	var cubeSets []CubeSet
 
 	for _, fragment := range cubesetsFragments {
-		cubes := parseCubes(fragment)
+		cubes := parseCubes(strings.Split(fragment, ","))
 		cubeSets = append(cubeSets, CubeSet{cubes: cubes})
 	}
 
 	return cubeSets
 }
 
-func parseCubes(fragment string) []Cube {
+func parseCubes(cubeFragments []string) []Cube {
 	var cubes = []Cube{}
-	cube := parseCube(fragment)
-	cubes = append(cubes, cube)
+	for _, cubeFragment := range cubeFragments {
+		cube := parseCube(cubeFragment)
+		cubes = append(cubes, cube)
+	}
 	return cubes
 }
 
@@ -94,7 +96,6 @@ func parseCube(s string) Cube {
 }
 
 func parseGameId(s string) int {
-
 	i := strings.Split(s, " ")
 
 	gameId, _ := Atoi(i[1])

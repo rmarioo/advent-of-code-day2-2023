@@ -1,8 +1,9 @@
 package main
 
 import (
+	"github.com/samber/lo"
 	"reflect"
-	"strconv"
+	. "strconv"
 	"strings"
 	"testing"
 )
@@ -61,19 +62,42 @@ func TestParseGameString(t *testing.T) {
 }
 
 func ParseGameString(s string) Game {
-	gameId := parseGameId(s)
+	var fragments = strings.Split(s, ":")
+	gameId := parseGameId(fragments[0])
+	cubeSets := parseCubeSets(fragments[1])
+	return Game{id: gameId, cubeSet: cubeSets}
+}
 
-	return Game{id: gameId, cubeSet: []CubeSet{
-		{cubes: []Cube{{num: 6, color: "blue"}}},
-		{cubes: []Cube{{num: 3, color: "red"}}},
-		{cubes: []Cube{{num: 4, color: "blue"}}}}}
+func parseCubeSets(s string) []CubeSet {
+	cubesetsFragments := strings.Split(s, ";")
+
+	var cubeSets = []CubeSet{}
+
+	for _, fragment := range cubesetsFragments {
+		cubes := parseCubes(fragment)
+		cubeSets = append(cubeSets, CubeSet{cubes: cubes})
+	}
+
+	return cubeSets
+}
+
+func parseCubes(fragment string) []Cube {
+	var cubes = []Cube{}
+	cube := parseCube(fragment)
+	cubes = append(cubes, cube)
+	return cubes
+}
+
+func parseCube(s string) Cube {
+	numAndColor := strings.Split(s, " ")
+	return Cube{lo.Must(Atoi(numAndColor[1])), numAndColor[2]}
 }
 
 func parseGameId(s string) int {
-	var split []string = strings.Split(s, ":")
-	i := strings.Split(split[0], " ")
 
-	gameId, _ := strconv.Atoi(i[1])
+	i := strings.Split(s, " ")
+
+	gameId, _ := Atoi(i[1])
 	return gameId
 }
 

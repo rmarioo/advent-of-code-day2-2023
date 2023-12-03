@@ -9,6 +9,20 @@ import (
 	"strings"
 )
 
+func Conundrum(supplier LinesSupplier, bag Bag) int {
+
+	lines := supplier.Lines()
+	sum := 0
+	for _, line := range lines {
+		game := ParseGameString(line)
+		if game.isPossibleFor(bag) {
+			sum += game.id
+		}
+	}
+
+	return sum
+}
+
 func (game Game) isPossibleFor(bag Bag) bool {
 
 	same := true

@@ -56,7 +56,7 @@ func TestParseGameString(t *testing.T) {
 
 }
 
-/*func TestConundrum(t *testing.T) {
+func TestConundrum(t *testing.T) {
 
 	var supplier LinesSupplier = StubLinesSupplier{lines: []string{
 		"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
@@ -66,17 +66,29 @@ func TestParseGameString(t *testing.T) {
 		"Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green",
 	}}
 
-	var res int = Conundrum(supplier)
+	bag := Bag{cubes: []Cube{
+		{num: 12, color: "red"},
+		{num: 13, color: "green"},
+		{num: 14, color: "blue"},
+	}}
+	var res int = Conundrum(supplier, bag)
 
-	assertEqualsInt(res, 2, t)
+	assertEqualsInt(res, 1+2+5, t)
 }
 
-func Conundrum(supplier LinesSupplier) int {
+func TestConundrumIntegration(t *testing.T) {
 
-	//lines := supplier.Lines()
+	var supplier LinesSupplier = FromFileLinesSupplier{fileName: "input.txt"}
 
-	return 1
-}*/
+	bag := Bag{cubes: []Cube{
+		{num: 12, color: "red"},
+		{num: 13, color: "green"},
+		{num: 14, color: "blue"},
+	}}
+	var res int = Conundrum(supplier, bag)
+
+	assertEqualsInt(res, 2204, t)
+}
 
 type StubLinesSupplier struct {
 	lines []string
